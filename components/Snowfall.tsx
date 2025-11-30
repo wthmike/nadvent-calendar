@@ -27,7 +27,8 @@ const Snowfall: React.FC = () => {
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-[5] overflow-hidden">
+    // Added 'hidden md:block' to prevent rendering on mobile devices
+    <div className="fixed inset-0 pointer-events-none z-[5] overflow-hidden hidden md:block">
       <style>{`
         @keyframes snowfall {
           0% {
