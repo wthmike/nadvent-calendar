@@ -8,6 +8,29 @@ const FieldHockeyStick = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const HighlightedContent = ({ text }: { text: string }) => {
+  // Regex to match "X points" or "X.X points" (case insensitive)
+  const regex = /(\d+(?:\.\d+)?\s*points)/gi;
+  
+  const parts = text.split(regex);
+
+  return (
+    <p className="text-3xl md:text-4xl brand-font font-normal text-neutral-100 leading-tight">
+      {parts.map((part, index) => {
+        if (part.match(regex)) {
+          return (
+            <span key={index} className="inline-block mx-1.5 px-3 py-0.5 bg-orange-500/20 border border-orange-500/50 rounded-full text-orange-300 text-2xl md:text-3xl align-middle shadow-[0_0_15px_rgba(249,115,22,0.2)] whitespace-nowrap">
+              <i className="fas fa-star text-[0.6em] mr-1.5 align-middle text-orange-400 mb-[2px]"></i>
+              {part}
+            </span>
+          );
+        }
+        return <span key={index}>{part}</span>;
+      })}
+    </p>
+  );
+};
+
 const Modal: React.FC<ModalProps> = ({ day, challenge, onClose }) => {
   if (day === null || !challenge) return null;
 
@@ -59,9 +82,7 @@ const Modal: React.FC<ModalProps> = ({ day, challenge, onClose }) => {
           </div>
 
           <div className="mb-10">
-             <p className="text-3xl md:text-4xl brand-font font-normal text-neutral-100 leading-tight">
-               {challenge.content}
-             </p>
+             <HighlightedContent text={challenge.content} />
           </div>
 
           <div className="flex flex-col gap-2 items-center justify-center">

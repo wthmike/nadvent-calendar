@@ -58,12 +58,18 @@ const App: React.FC = () => {
     setChallenges(initialChallenges);
   }, []);
 
+  // --- Helpers ---
+  const checkIsLocked = (day: number, current: number) => {
+    if (day <= 12) return false; // Days 1-12 always unlocked
+    if (day >= 13 && day <= 18) return current < 13; // Batch 1: Unlocks Dec 13
+    if (day >= 19 && day <= 24) return current < 19; // Batch 2: Unlocks Dec 19
+    return current < day; // Day 25 unlocks on Dec 25
+  };
+
   // --- Handlers ---
 
   const handleOpenDay = (day: number) => {
-    // Logic: Days 1-12 are always openable. 
-    // Days 13+ are only openable if the day has arrived.
-    const isLocked = day > 12 && day > currentDate;
+    const isLocked = checkIsLocked(day, currentDate);
     
     if (isLocked) return;
 
@@ -115,16 +121,33 @@ const App: React.FC = () => {
         <main className="max-w-7xl mx-auto px-6 pb-32">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
             {challenges.map((challenge) => {
-              // Calculate locked state based on custom rule
-              const isLocked = challenge.day > 12 ? challenge.day > currentDate : false;
+              const isLocked = checkIsLocked(challenge.day, currentDate);
               
               return (
                 <div key={challenge.day} className="relative group/wrapper">
-                  {challenge.day === 13 && (
-                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-64 text-center z-20 pointer-events-none animate-pulse">
-                      <div className="inline-block bg-orange-900/90 text-orange-100 text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-md border border-orange-500/40 shadow-xl backdrop-blur-md">
-                        <i className="fas fa-exclamation-circle mr-1 text-orange-400"></i>
-                        Watch out! Real dates apply from here!
+                  {challenge.day === 13 && isLocked && (
+                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-72 text-center z-20 pointer-events-none">
+                      <div className="inline-block bg-orange-900/90 text-orange-100 text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-md border border-orange-500/40 shadow-xl backdrop-blur-md animate-pulse">
+                        <i className="fas fa-gift mr-1 text-orange-400"></i>
+                        Next Release: Days 13-18
+                      </div>
+                      <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-orange-500/40 mx-auto -mt-[1px]"></div>
+                    </div>
+                  )}
+                  {challenge.day === 19 && isLocked && (
+                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-72 text-center z-20 pointer-events-none">
+                      <div className="inline-block bg-orange-900/90 text-orange-100 text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-md border border-orange-500/40 shadow-xl backdrop-blur-md animate-pulse">
+                        <i className="fas fa-gift mr-1 text-orange-400"></i>
+                        Next Release: Days 19-24
+                      </div>
+                      <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-orange-500/40 mx-auto -mt-[1px]"></div>
+                    </div>
+                  )}
+                  {challenge.day === 25 && isLocked && (
+                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-72 text-center z-20 pointer-events-none">
+                      <div className="inline-block bg-orange-900/90 text-orange-100 text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-md border border-orange-500/40 shadow-xl backdrop-blur-md animate-pulse">
+                        <i className="fas fa-gift mr-1 text-orange-400"></i>
+                        Next Release: Day 25
                       </div>
                       <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-orange-500/40 mx-auto -mt-[1px]"></div>
                     </div>
