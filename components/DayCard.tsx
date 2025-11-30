@@ -33,71 +33,76 @@ const DayCard: React.FC<DayCardProps> = ({ day, isOpen, isLocked, onOpen }) => {
     <div 
       onClick={handleClick}
       className={`relative group h-64 w-full perspective-1000 ${isLocked ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+      style={{ WebkitTapHighlightColor: 'transparent' }}
     >
-      <div className={`relative w-full h-full transition-all duration-700 transform-style-3d ${isOpen ? 'rotate-y-180' : 'group-hover:-translate-y-2'}`}>
+      <div className={`relative w-full h-full transition-transform duration-500 ease-in-out transform-style-3d will-change-transform ${isOpen ? 'rotate-y-180' : 'group-hover:-translate-y-2'}`}>
         
         {/* Front of Card (Closed - Present Design) */}
         <div className="absolute w-full h-full backface-hidden rounded-xl overflow-hidden shadow-2xl bg-neutral-900 border border-neutral-800">
           
-          {/* Background Design */}
-          <div className="absolute inset-0 bg-neutral-900">
-             {/* Subtle Pattern (Wrapping Paper Feel) */}
-             <div className="absolute inset-0 opacity-[0.03]" 
-                  style={{ backgroundImage: 'linear-gradient(45deg, #ffffff 25%, transparent 25%, transparent 50%, #ffffff 50%, #ffffff 75%, transparent 75%, transparent)', backgroundSize: '20px 20px' }}>
-             </div>
-             {/* Dark Gradient Overlay */}
-             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-neutral-800/50 to-neutral-950"></div>
-          </div>
-          
-          {/* Gift Ribbons (Locked Only) */}
-          {isLocked && (
-            <>
-              {/* Vertical Ribbon */}
-              <div className="absolute inset-0 flex justify-center pointer-events-none z-10">
-                <div className="w-12 h-full bg-neutral-800/80 border-x border-orange-500/10 backdrop-blur-[2px] shadow-sm"></div>
+          {/* Opacity Wrapper: Hides content when flipped to prevent mobile bleed-through */}
+          <div className={`w-full h-full transition-opacity duration-75 ${isOpen ? 'opacity-0 delay-150' : 'opacity-100 delay-150'}`}>
+              
+              {/* Background Design */}
+              <div className="absolute inset-0 bg-neutral-900">
+                {/* Subtle Pattern (Wrapping Paper Feel) */}
+                <div className="absolute inset-0 opacity-[0.03]" 
+                      style={{ backgroundImage: 'linear-gradient(45deg, #ffffff 25%, transparent 25%, transparent 50%, #ffffff 50%, #ffffff 75%, transparent 75%, transparent)', backgroundSize: '20px 20px' }}>
+                </div>
+                {/* Dark Gradient Overlay */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-neutral-800/50 to-neutral-950"></div>
               </div>
-              {/* Horizontal Ribbon */}
-              <div className="absolute inset-0 flex items-center pointer-events-none z-10">
-                <div className="w-full h-12 bg-neutral-800/80 border-y border-orange-500/10 backdrop-blur-[2px] shadow-sm"></div>
+              
+              {/* Gift Ribbons (Locked Only) */}
+              {isLocked && (
+                <>
+                  {/* Vertical Ribbon */}
+                  <div className="absolute inset-0 flex justify-center pointer-events-none z-10">
+                    <div className="w-12 h-full bg-neutral-800/80 border-x border-orange-500/10 backdrop-blur-[2px] shadow-sm"></div>
+                  </div>
+                  {/* Horizontal Ribbon */}
+                  <div className="absolute inset-0 flex items-center pointer-events-none z-10">
+                    <div className="w-full h-12 bg-neutral-800/80 border-y border-orange-500/10 backdrop-blur-[2px] shadow-sm"></div>
+                  </div>
+                  {/* Center Knot/Bow */}
+                  <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+                    <div className="w-16 h-16 bg-neutral-800 border border-orange-500/20 rounded-full shadow-lg flex items-center justify-center">
+                        <i className="fas fa-lock text-neutral-500 text-xs"></i>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Abstract Stick Watermark (Subtle) */}
+              <div className="absolute -bottom-10 -right-10 text-neutral-800 transform rotate-12 opacity-30 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 z-0">
+                <FieldHockeyStick className="w-48 h-48" />
               </div>
-              {/* Center Knot/Bow */}
-              <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
-                 <div className="w-16 h-16 bg-neutral-800 border border-orange-500/20 rounded-full shadow-lg flex items-center justify-center">
-                    <i className="fas fa-lock text-neutral-500 text-xs"></i>
-                 </div>
+
+              {/* Status Indicator (Unlocked) */}
+              {!isLocked && (
+                <div className="absolute top-4 left-0 w-full flex justify-center z-20">
+                  <div className="flex items-center gap-2">
+                    <i className="fas fa-star text-[8px] text-orange-400"></i>
+                    <span className="text-[10px] tracking-[0.3em] font-serif text-orange-400 uppercase border-b border-orange-500/50 pb-1">
+                      Open Gift
+                    </span>
+                    <i className="fas fa-star text-[8px] text-orange-400"></i>
+                  </div>
+                </div>
+              )}
+
+              {/* Date Number */}
+              <div className="relative flex flex-col items-center justify-center h-full z-30">
+                <span className={`text-7xl brand-font italic font-light tracking-tighter transition-colors duration-300 drop-shadow-md ${isLocked ? 'text-neutral-300' : 'text-neutral-200 group-hover:text-orange-400'}`}>
+                  {day}
+                </span>
               </div>
-            </>
-          )}
 
-          {/* Abstract Stick Watermark (Subtle) */}
-          <div className="absolute -bottom-10 -right-10 text-neutral-800 transform rotate-12 opacity-30 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 z-0">
-            <FieldHockeyStick className="w-48 h-48" />
+              {/* Bottom Branding Line */}
+              {!isLocked && (
+                <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-orange-700 via-orange-500 to-orange-700 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+              )}
           </div>
-
-          {/* Status Indicator (Unlocked) */}
-          {!isLocked && (
-            <div className="absolute top-4 left-0 w-full flex justify-center z-20">
-               <div className="flex items-center gap-2">
-                 <i className="fas fa-star text-[8px] text-orange-400"></i>
-                 <span className="text-[10px] tracking-[0.3em] font-serif text-orange-400 uppercase border-b border-orange-500/50 pb-1">
-                   Open Gift
-                 </span>
-                 <i className="fas fa-star text-[8px] text-orange-400"></i>
-               </div>
-            </div>
-          )}
-
-          {/* Date Number */}
-          <div className="relative flex flex-col items-center justify-center h-full z-30">
-            <span className={`text-7xl brand-font italic font-light tracking-tighter transition-colors duration-300 drop-shadow-2xl ${isLocked ? 'text-neutral-300' : 'text-neutral-200 group-hover:text-orange-400'}`}>
-              {day}
-            </span>
-          </div>
-
-          {/* Bottom Branding Line */}
-          {!isLocked && (
-            <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-orange-700 via-orange-500 to-orange-700 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
-          )}
         </div>
 
         {/* Back of Card (Opened) */}
