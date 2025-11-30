@@ -35,13 +35,24 @@ const DayCard: React.FC<DayCardProps> = ({ day, isOpen, isLocked, onOpen }) => {
       className={`relative group h-64 w-full perspective-1000 ${isLocked ? 'cursor-not-allowed' : 'cursor-pointer'}`}
       style={{ WebkitTapHighlightColor: 'transparent' }}
     >
-      <div className={`relative w-full h-full transition-transform duration-500 ease-in-out transform-style-3d will-change-transform ${isOpen ? 'rotate-y-180' : 'group-hover:-translate-y-2'}`}>
+      {/* 
+        Updates: 
+        1. Reduced duration-500 to duration-300 for snappier mobile feel.
+        2. Changed group-hover to md:group-hover to prevent sticky lift on mobile tap.
+        3. Added transform-gpu.
+      */}
+      <div className={`relative w-full h-full transition-transform duration-300 ease-in-out transform-style-3d transform-gpu will-change-transform ${isOpen ? 'rotate-y-180' : 'md:group-hover:-translate-y-2'}`}>
         
         {/* Front of Card (Closed - Present Design) */}
         <div className="absolute w-full h-full backface-hidden rounded-xl overflow-hidden shadow-2xl bg-neutral-900 border border-neutral-800">
           
-          {/* Opacity Wrapper: Hides content when flipped to prevent mobile bleed-through */}
-          <div className={`w-full h-full transition-opacity duration-75 ${isOpen ? 'opacity-0 delay-150' : 'opacity-100 delay-150'}`}>
+          {/* 
+             Opacity Wrapper: 
+             Updates: Tuning timing to be more aggressive.
+             On Open: Fades out in 100ms (very fast) so it's gone before the flip is halfway.
+             On Close: Delays fading in until the card is almost back.
+          */}
+          <div className={`w-full h-full transition-opacity ease-in-out ${isOpen ? 'opacity-0 duration-100' : 'opacity-100 duration-300 delay-150'}`}>
               
               {/* Background Design */}
               <div className="absolute inset-0 bg-neutral-900">
@@ -56,13 +67,13 @@ const DayCard: React.FC<DayCardProps> = ({ day, isOpen, isLocked, onOpen }) => {
               {/* Gift Ribbons (Locked Only) */}
               {isLocked && (
                 <>
-                  {/* Vertical Ribbon */}
+                  {/* Vertical Ribbon - Removed backdrop-blur */}
                   <div className="absolute inset-0 flex justify-center pointer-events-none z-10">
-                    <div className="w-12 h-full bg-neutral-800/80 border-x border-orange-500/10 backdrop-blur-[2px] shadow-sm"></div>
+                    <div className="w-12 h-full bg-neutral-800/90 border-x border-orange-500/10 shadow-sm"></div>
                   </div>
-                  {/* Horizontal Ribbon */}
+                  {/* Horizontal Ribbon - Removed backdrop-blur */}
                   <div className="absolute inset-0 flex items-center pointer-events-none z-10">
-                    <div className="w-full h-12 bg-neutral-800/80 border-y border-orange-500/10 backdrop-blur-[2px] shadow-sm"></div>
+                    <div className="w-full h-12 bg-neutral-800/90 border-y border-orange-500/10 shadow-sm"></div>
                   </div>
                   {/* Center Knot/Bow */}
                   <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
@@ -100,7 +111,7 @@ const DayCard: React.FC<DayCardProps> = ({ day, isOpen, isLocked, onOpen }) => {
 
               {/* Bottom Branding Line */}
               {!isLocked && (
-                <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-orange-700 via-orange-500 to-orange-700 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+                <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-orange-700 via-orange-500 to-orange-700 transform scale-x-0 md:group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
               )}
           </div>
         </div>
@@ -109,7 +120,7 @@ const DayCard: React.FC<DayCardProps> = ({ day, isOpen, isLocked, onOpen }) => {
         <div className="absolute w-full h-full backface-hidden rotate-y-180 rounded-xl overflow-hidden shadow-xl bg-gradient-to-br from-orange-600 to-red-700 text-white border border-orange-500/30">
            {day === 25 ? (
               // Special Image for Day 25 (Christmas Day)
-              <div className="w-full h-full relative group-hover:scale-105 transition-transform duration-1000">
+              <div className="w-full h-full relative hover:scale-105 transition-transform duration-1000">
                  <img 
                    src="https://i.ibb.co/8nXwKrPX/Screenshot-2025-11-30-at-19-11-05.png" 
                    alt="Day 25 Special" 
