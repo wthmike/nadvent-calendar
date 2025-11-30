@@ -36,27 +36,22 @@ const DayCard: React.FC<DayCardProps> = ({ day, isOpen, isLocked, onOpen }) => {
       style={{ WebkitTapHighlightColor: 'transparent' }}
     >
       {/* 
-        Updates: 
-        1. Reduced duration-500 to duration-300 for snappier mobile feel.
-        2. Changed group-hover to md:group-hover to prevent sticky lift on mobile tap.
-        3. Added transform-gpu.
+        Updates for Mobile Stability:
+        - Mobile: No rotation on wrapper. Visibility toggle for faces.
+        - Desktop: Standard 3D flip (wrapper rotates 180deg).
       */}
-      <div className={`relative w-full h-full transition-transform duration-300 ease-in-out transform-style-3d transform-gpu will-change-transform ${isOpen ? 'rotate-y-180' : 'md:group-hover:-translate-y-2'}`}>
+      <div className={`relative w-full h-full transform-style-3d transform-gpu will-change-transform ${isOpen ? 'md:rotate-y-180' : 'md:group-hover:-translate-y-2'} transition-transform duration-500 ease-in-out`}>
         
-        {/* Front of Card (Closed - Present Design) */}
-        <div className="absolute w-full h-full backface-hidden rounded-xl overflow-hidden shadow-2xl bg-neutral-900 border border-neutral-800">
+        {/* Front of Card */}
+        {/* Mobile: Hidden instantly when open. Desktop: Visible (backface hidden handles it). */}
+        <div className={`absolute w-full h-full backface-hidden rounded-xl overflow-hidden shadow-2xl bg-neutral-900 border border-neutral-800 ${isOpen ? 'hidden md:block' : ''}`}>
           
-          {/* 
-             Opacity Wrapper: 
-             Updates: Tuning timing to be more aggressive.
-             On Open: Fades out in 100ms (very fast) so it's gone before the flip is halfway.
-             On Close: Delays fading in until the card is almost back.
-          */}
-          <div className={`w-full h-full transition-opacity ease-in-out ${isOpen ? 'opacity-0 duration-100' : 'opacity-100 duration-300 delay-150'}`}>
+          {/* Opacity Wrapper for Desktop visual polish (fades out content during flip) */}
+          <div className={`w-full h-full transition-opacity ease-in-out ${isOpen ? 'md:opacity-0 md:duration-100' : 'md:opacity-100 md:duration-300 md:delay-150'}`}>
               
               {/* Background Design */}
               <div className="absolute inset-0 bg-neutral-900">
-                {/* Subtle Pattern (Wrapping Paper Feel) */}
+                {/* Subtle Pattern */}
                 <div className="absolute inset-0 opacity-[0.03]" 
                       style={{ backgroundImage: 'linear-gradient(45deg, #ffffff 25%, transparent 25%, transparent 50%, #ffffff 50%, #ffffff 75%, transparent 75%, transparent)', backgroundSize: '20px 20px' }}>
                 </div>
@@ -67,15 +62,12 @@ const DayCard: React.FC<DayCardProps> = ({ day, isOpen, isLocked, onOpen }) => {
               {/* Gift Ribbons (Locked Only) */}
               {isLocked && (
                 <>
-                  {/* Vertical Ribbon - Removed backdrop-blur */}
                   <div className="absolute inset-0 flex justify-center pointer-events-none z-10">
                     <div className="w-12 h-full bg-neutral-800/90 border-x border-orange-500/10 shadow-sm"></div>
                   </div>
-                  {/* Horizontal Ribbon - Removed backdrop-blur */}
                   <div className="absolute inset-0 flex items-center pointer-events-none z-10">
                     <div className="w-full h-12 bg-neutral-800/90 border-y border-orange-500/10 shadow-sm"></div>
                   </div>
-                  {/* Center Knot/Bow */}
                   <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
                     <div className="w-16 h-16 bg-neutral-800 border border-orange-500/20 rounded-full shadow-lg flex items-center justify-center">
                         <i className="fas fa-lock text-neutral-500 text-xs"></i>
@@ -84,7 +76,7 @@ const DayCard: React.FC<DayCardProps> = ({ day, isOpen, isLocked, onOpen }) => {
                 </>
               )}
 
-              {/* Abstract Stick Watermark (Subtle) */}
+              {/* Abstract Stick Watermark */}
               <div className="absolute -bottom-10 -right-10 text-neutral-800 transform rotate-12 opacity-30 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 z-0">
                 <FieldHockeyStick className="w-48 h-48" />
               </div>
@@ -117,7 +109,13 @@ const DayCard: React.FC<DayCardProps> = ({ day, isOpen, isLocked, onOpen }) => {
         </div>
 
         {/* Back of Card (Opened) */}
-        <div className="absolute w-full h-full backface-hidden rotate-y-180 rounded-xl overflow-hidden shadow-xl bg-gradient-to-br from-orange-600 to-red-700 text-white border border-orange-500/30">
+        {/* 
+            Mobile Open: rotate-0 (Faces front immediately).
+            Mobile Closed: rotate-y-180 (Faces back/hidden).
+            Desktop Open: md:rotate-y-180 (Faces forward after wrapper rotates 180).
+            Desktop Closed: rotate-y-180 (Faces back/hidden).
+        */}
+        <div className={`absolute w-full h-full backface-hidden rounded-xl overflow-hidden shadow-xl bg-gradient-to-br from-orange-600 to-red-700 text-white border border-orange-500/30 ${isOpen ? 'rotate-y-0 md:rotate-y-180' : 'rotate-y-180'}`}>
            {day === 25 ? (
               // Special Image for Day 25 (Christmas Day)
               <div className="w-full h-full relative hover:scale-105 transition-transform duration-1000">

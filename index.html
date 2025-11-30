@@ -29,8 +29,22 @@
         backface-visibility: hidden;
       }
       
+      /* 3D Rotation Utilities */
       .rotate-y-180 {
         transform: rotateY(180deg);
+      }
+      
+      .rotate-y-0 {
+        transform: rotateY(0deg);
+      }
+      
+      @media (min-width: 768px) {
+        .md\:rotate-y-180 {
+          transform: rotateY(180deg);
+        }
+        .md\:rotate-y-0 {
+          transform: rotateY(0deg);
+        }
       }
 
       /* Smooth fade in */

@@ -19,8 +19,8 @@ const Modal: React.FC<ModalProps> = ({ day, challenge, onClose }) => {
         onClick={onClose}
       ></div>
 
-      {/* Modal Content */}
-      <div className="relative w-full max-w-lg bg-neutral-900 border border-neutral-800 shadow-2xl overflow-hidden animate-fade-in-scale">
+      {/* Modal Content - Update: removed unconditional animate-fade-in-scale, added md: prefix */}
+      <div className="relative w-full max-w-lg bg-neutral-900 border border-neutral-800 shadow-2xl overflow-hidden md:animate-fade-in-scale">
         
         {/* Stylish Header */}
         <div className="relative h-40 bg-orange-600 flex items-center justify-center overflow-hidden">
