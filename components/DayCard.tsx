@@ -46,23 +46,23 @@ const DayCard: React.FC<DayCardProps> = ({ day, isOpen, isLocked, onOpen }) => {
       style={{ WebkitTapHighlightColor: 'transparent' }}
     >
       {/* 
-        Updates for Mobile Performance:
-        - Removed `will-change-transform` to prevent high memory usage on 25 cards.
-        - Mobile: No rotation on wrapper. Visibility toggle for faces.
-        - Desktop: Standard 3D flip (wrapper rotates 180deg).
+        Updates:
+        - Removed 'transform-gpu' to avoid conflict with custom 3D transforms.
+        - Mobile: No rotation on wrapper (0deg).
+        - Desktop: Wrapper rotates 180deg.
       */}
-      <div className={`relative w-full h-full transform-style-3d transform-gpu ${isOpen ? 'md:rotate-y-180' : 'md:group-hover:-translate-y-2'} transition-transform duration-500 ease-in-out`}>
+      <div className={`relative w-full h-full transform-style-3d ${isOpen ? 'md:rotate-y-180' : 'md:group-hover:-translate-y-2'} transition-transform duration-500 ease-in-out`}>
         
         {/* Front of Card */}
-        {/* Mobile: Hidden instantly when open. Desktop: Visible (backface hidden handles it). */}
+        {/* On mobile: Hidden via display none when open. On Desktop: Maintained block, handled by backface-visibility */}
         <div className={`absolute w-full h-full backface-hidden rounded-xl overflow-hidden shadow-sm md:shadow-2xl bg-neutral-900 border border-neutral-800 ${isOpen ? 'hidden md:block' : ''}`}>
           
           {/* Opacity Wrapper for Desktop visual polish (fades out content during flip) */}
           <div className={`w-full h-full transition-opacity ease-in-out ${isOpen ? 'md:opacity-0 md:duration-100' : 'md:opacity-100 md:duration-300 md:delay-150'}`}>
               
-              {/* Background Design - Simplified for performance */}
+              {/* Background Design */}
               <div className="absolute inset-0 bg-neutral-900">
-                {/* Subtle Pattern - Desktop only to save mobile painting */}
+                {/* Subtle Pattern - Desktop only */}
                 <div className="hidden md:block absolute inset-0 opacity-[0.03]" 
                       style={{ backgroundImage: 'linear-gradient(45deg, #ffffff 25%, transparent 25%, transparent 50%, #ffffff 50%, #ffffff 75%, transparent 75%, transparent)', backgroundSize: '20px 20px' }}>
                 </div>
@@ -87,7 +87,7 @@ const DayCard: React.FC<DayCardProps> = ({ day, isOpen, isLocked, onOpen }) => {
                 </>
               )}
 
-              {/* Abstract Stick Watermark - Use Simple version for performance */}
+              {/* Abstract Stick Watermark */}
               <div className="absolute -bottom-10 -right-10 text-neutral-800 transform rotate-12 opacity-30 md:transition-transform md:duration-500 md:group-hover:scale-110 md:group-hover:rotate-6 z-0">
                 <FieldHockeyStick className="w-48 h-48" simple={true} />
               </div>
@@ -105,7 +105,7 @@ const DayCard: React.FC<DayCardProps> = ({ day, isOpen, isLocked, onOpen }) => {
                 </div>
               )}
 
-              {/* Date Number - Removed heavy drop-shadow on mobile */}
+              {/* Date Number */}
               <div className="relative flex flex-col items-center justify-center h-full z-30">
                 <span className={`text-7xl brand-font italic font-light tracking-tighter transition-colors duration-300 md:drop-shadow-md ${isLocked ? 'text-neutral-300' : 'text-neutral-200 group-hover:text-orange-400'}`}>
                   {day}
@@ -121,10 +121,10 @@ const DayCard: React.FC<DayCardProps> = ({ day, isOpen, isLocked, onOpen }) => {
 
         {/* Back of Card (Opened) */}
         {/* 
-            Mobile Open: rotate-0 (Faces front immediately).
-            Mobile Closed: rotate-y-180 (Faces back/hidden).
-            Desktop Open: md:rotate-y-180 (Faces forward after wrapper rotates 180).
-            Desktop Closed: rotate-y-180 (Faces back/hidden).
+            Rotation Logic:
+            - Default/Closed: rotate-y-180 (Faces away)
+            - Open (Mobile): rotate-y-0 (Faces front immediately)
+            - Open (Desktop): rotate-y-180 (Faces away relative to wrapper, but wrapper is flipped 180, so it faces front)
         */}
         <div className={`absolute w-full h-full backface-hidden rounded-xl overflow-hidden shadow-sm md:shadow-xl bg-gradient-to-br from-orange-600 to-red-700 text-white border border-orange-500/30 ${isOpen ? 'rotate-y-0 md:rotate-y-180' : 'rotate-y-180'}`}>
            {day === 25 ? (

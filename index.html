@@ -27,23 +27,21 @@
       
       .backface-hidden {
         backface-visibility: hidden;
+        -webkit-backface-visibility: hidden; /* Safari support */
       }
       
-      /* 3D Rotation Utilities */
-      .rotate-y-180 {
-        transform: rotateY(180deg);
-      }
-      
+      /* 3D Rotation Utilities - Using !important to override Tailwind's transform resets */
       .rotate-y-0 {
-        transform: rotateY(0deg);
+        transform: rotateY(0deg) !important;
+      }
+
+      .rotate-y-180 {
+        transform: rotateY(180deg) !important;
       }
       
       @media (min-width: 768px) {
         .md\:rotate-y-180 {
-          transform: rotateY(180deg);
-        }
-        .md\:rotate-y-0 {
-          transform: rotateY(0deg);
+          transform: rotateY(180deg) !important;
         }
       }
 
