@@ -1,23 +1,33 @@
 import React from 'react';
 import { DayCardProps } from '../types';
 
-const FieldHockeyStick = ({ className }: { className?: string }) => (
+// Optimized Icon: Removed the complex <mask> for better rendering performance on mobile lists
+const FieldHockeyStick = ({ className, simple = false }: { className?: string, simple?: boolean }) => (
   <svg viewBox="0 0 100 100" className={className} fill="currentColor">
-    {/* Stylized J-shaped Field Hockey Stick with striped cutout mask for candy cane feel */}
-    <mask id="stripes">
-      <rect x="0" y="0" width="100" height="100" fill="white" />
-      <path d="M0 0 L100 100" stroke="black" strokeWidth="5" />
-      <path d="M20 0 L120 100" stroke="black" strokeWidth="5" />
-      <path d="M-20 0 L80 100" stroke="black" strokeWidth="5" />
-      <path d="M40 0 L140 100" stroke="black" strokeWidth="5" />
-      <path d="M-40 0 L60 100" stroke="black" strokeWidth="5" />
-    </mask>
-    <path 
-      d="M45 10 C 45 5, 55 5, 55 10 L 55 70 C 55 85, 65 85, 75 80 C 80 78, 82 75, 80 70 L 78 65 L 85 62 L 90 70 C 95 80, 85 95, 65 95 C 45 95, 45 80, 45 70 Z" 
-      mask="url(#stripes)"
-    />
-    {/* Ball */}
-    <circle cx="35" cy="85" r="6" />
+    {simple ? (
+      // Simple version for watermarks (no mask calculation needed)
+      <>
+        <path d="M45 10 C 45 5, 55 5, 55 10 L 55 70 C 55 85, 65 85, 75 80 C 80 78, 82 75, 80 70 L 78 65 L 85 62 L 90 70 C 95 80, 85 95, 65 95 C 45 95, 45 80, 45 70 Z" />
+        <circle cx="35" cy="85" r="6" />
+      </>
+    ) : (
+      // Detailed version for featured spots
+      <>
+        <mask id="stripes">
+          <rect x="0" y="0" width="100" height="100" fill="white" />
+          <path d="M0 0 L100 100" stroke="black" strokeWidth="5" />
+          <path d="M20 0 L120 100" stroke="black" strokeWidth="5" />
+          <path d="M-20 0 L80 100" stroke="black" strokeWidth="5" />
+          <path d="M40 0 L140 100" stroke="black" strokeWidth="5" />
+          <path d="M-40 0 L60 100" stroke="black" strokeWidth="5" />
+        </mask>
+        <path 
+          d="M45 10 C 45 5, 55 5, 55 10 L 55 70 C 55 85, 65 85, 75 80 C 80 78, 82 75, 80 70 L 78 65 L 85 62 L 90 70 C 95 80, 85 95, 65 95 C 45 95, 45 80, 45 70 Z" 
+          mask="url(#stripes)"
+        />
+        <circle cx="35" cy="85" r="6" />
+      </>
+    )}
   </svg>
 );
 
@@ -36,27 +46,28 @@ const DayCard: React.FC<DayCardProps> = ({ day, isOpen, isLocked, onOpen }) => {
       style={{ WebkitTapHighlightColor: 'transparent' }}
     >
       {/* 
-        Updates for Mobile Stability:
+        Updates for Mobile Performance:
+        - Removed `will-change-transform` to prevent high memory usage on 25 cards.
         - Mobile: No rotation on wrapper. Visibility toggle for faces.
         - Desktop: Standard 3D flip (wrapper rotates 180deg).
       */}
-      <div className={`relative w-full h-full transform-style-3d transform-gpu will-change-transform ${isOpen ? 'md:rotate-y-180' : 'md:group-hover:-translate-y-2'} transition-transform duration-500 ease-in-out`}>
+      <div className={`relative w-full h-full transform-style-3d transform-gpu ${isOpen ? 'md:rotate-y-180' : 'md:group-hover:-translate-y-2'} transition-transform duration-500 ease-in-out`}>
         
         {/* Front of Card */}
         {/* Mobile: Hidden instantly when open. Desktop: Visible (backface hidden handles it). */}
-        <div className={`absolute w-full h-full backface-hidden rounded-xl overflow-hidden shadow-2xl bg-neutral-900 border border-neutral-800 ${isOpen ? 'hidden md:block' : ''}`}>
+        <div className={`absolute w-full h-full backface-hidden rounded-xl overflow-hidden shadow-sm md:shadow-2xl bg-neutral-900 border border-neutral-800 ${isOpen ? 'hidden md:block' : ''}`}>
           
           {/* Opacity Wrapper for Desktop visual polish (fades out content during flip) */}
           <div className={`w-full h-full transition-opacity ease-in-out ${isOpen ? 'md:opacity-0 md:duration-100' : 'md:opacity-100 md:duration-300 md:delay-150'}`}>
               
-              {/* Background Design */}
+              {/* Background Design - Simplified for performance */}
               <div className="absolute inset-0 bg-neutral-900">
-                {/* Subtle Pattern */}
-                <div className="absolute inset-0 opacity-[0.03]" 
+                {/* Subtle Pattern - Desktop only to save mobile painting */}
+                <div className="hidden md:block absolute inset-0 opacity-[0.03]" 
                       style={{ backgroundImage: 'linear-gradient(45deg, #ffffff 25%, transparent 25%, transparent 50%, #ffffff 50%, #ffffff 75%, transparent 75%, transparent)', backgroundSize: '20px 20px' }}>
                 </div>
-                {/* Dark Gradient Overlay */}
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-neutral-800/50 to-neutral-950"></div>
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-neutral-800/50 to-neutral-950"></div>
               </div>
               
               {/* Gift Ribbons (Locked Only) */}
@@ -76,9 +87,9 @@ const DayCard: React.FC<DayCardProps> = ({ day, isOpen, isLocked, onOpen }) => {
                 </>
               )}
 
-              {/* Abstract Stick Watermark */}
-              <div className="absolute -bottom-10 -right-10 text-neutral-800 transform rotate-12 opacity-30 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 z-0">
-                <FieldHockeyStick className="w-48 h-48" />
+              {/* Abstract Stick Watermark - Use Simple version for performance */}
+              <div className="absolute -bottom-10 -right-10 text-neutral-800 transform rotate-12 opacity-30 md:transition-transform md:duration-500 md:group-hover:scale-110 md:group-hover:rotate-6 z-0">
+                <FieldHockeyStick className="w-48 h-48" simple={true} />
               </div>
 
               {/* Status Indicator (Unlocked) */}
@@ -94,9 +105,9 @@ const DayCard: React.FC<DayCardProps> = ({ day, isOpen, isLocked, onOpen }) => {
                 </div>
               )}
 
-              {/* Date Number */}
+              {/* Date Number - Removed heavy drop-shadow on mobile */}
               <div className="relative flex flex-col items-center justify-center h-full z-30">
-                <span className={`text-7xl brand-font italic font-light tracking-tighter transition-colors duration-300 drop-shadow-md ${isLocked ? 'text-neutral-300' : 'text-neutral-200 group-hover:text-orange-400'}`}>
+                <span className={`text-7xl brand-font italic font-light tracking-tighter transition-colors duration-300 md:drop-shadow-md ${isLocked ? 'text-neutral-300' : 'text-neutral-200 group-hover:text-orange-400'}`}>
                   {day}
                 </span>
               </div>
@@ -115,14 +126,15 @@ const DayCard: React.FC<DayCardProps> = ({ day, isOpen, isLocked, onOpen }) => {
             Desktop Open: md:rotate-y-180 (Faces forward after wrapper rotates 180).
             Desktop Closed: rotate-y-180 (Faces back/hidden).
         */}
-        <div className={`absolute w-full h-full backface-hidden rounded-xl overflow-hidden shadow-xl bg-gradient-to-br from-orange-600 to-red-700 text-white border border-orange-500/30 ${isOpen ? 'rotate-y-0 md:rotate-y-180' : 'rotate-y-180'}`}>
+        <div className={`absolute w-full h-full backface-hidden rounded-xl overflow-hidden shadow-sm md:shadow-xl bg-gradient-to-br from-orange-600 to-red-700 text-white border border-orange-500/30 ${isOpen ? 'rotate-y-0 md:rotate-y-180' : 'rotate-y-180'}`}>
            {day === 25 ? (
               // Special Image for Day 25 (Christmas Day)
-              <div className="w-full h-full relative hover:scale-105 transition-transform duration-1000">
+              <div className="w-full h-full relative md:hover:scale-105 transition-transform duration-1000">
                  <img 
                    src="https://i.ibb.co/8nXwKrPX/Screenshot-2025-11-30-at-19-11-05.png" 
                    alt="Day 25 Special" 
                    className="w-full h-full object-cover"
+                   loading="lazy"
                  />
                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                  <div className="absolute bottom-6 left-0 w-full text-center">
@@ -136,8 +148,8 @@ const DayCard: React.FC<DayCardProps> = ({ day, isOpen, isLocked, onOpen }) => {
            ) : (
               // Standard Card Back
               <>
-                {/* Decorative Sparkle BG */}
-                <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '12px 12px' }}></div>
+                {/* Decorative Sparkle BG - Only on Desktop */}
+                <div className="hidden md:block absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '12px 12px' }}></div>
                 
                 {/* Decorative Curve */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-bl-[100px] -z-0"></div>
@@ -146,7 +158,7 @@ const DayCard: React.FC<DayCardProps> = ({ day, isOpen, isLocked, onOpen }) => {
                     <span className="text-6xl brand-font text-white/10 absolute top-2 left-4 italic">{day}</span>
                     
                     <div className="mb-4 text-orange-100/90">
-                      <FieldHockeyStick className="w-16 h-16 drop-shadow-lg" />
+                      <FieldHockeyStick className="w-16 h-16 drop-shadow-md" simple={false} />
                     </div>
                     
                     <div className="flex items-center gap-2 border-b border-orange-200/50 pb-1 mb-1">

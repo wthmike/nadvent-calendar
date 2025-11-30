@@ -85,15 +85,8 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-200 font-serif selection:bg-orange-500 selection:text-white relative overflow-hidden">
       
-      {/* Festive Ambient Background (Bokeh) */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-         {/* Deep Emerald Glow (Left) */}
-         <div className="absolute top-[-10%] left-[-10%] w-[60vw] h-[60vh] bg-emerald-900/20 blur-[120px] rounded-full mix-blend-screen"></div>
-         {/* Ruby Red Glow (Right) */}
-         <div className="absolute top-[-10%] right-[-10%] w-[60vw] h-[60vh] bg-red-900/20 blur-[120px] rounded-full mix-blend-screen"></div>
-         {/* Warm Gold Glow (Center/Bottom) */}
-         <div className="absolute bottom-[-10%] left-1/2 -translate-x-1/2 w-[80vw] h-[50vh] bg-amber-700/10 blur-[150px] rounded-full mix-blend-screen"></div>
-      </div>
+      {/* Optimized Background: Removed heavy blur-[120px] elements. Replaced with static gradient for mobile speed. */}
+      <div className="fixed inset-0 pointer-events-none z-0 bg-[radial-gradient(circle_at_top_left,_#115e59_0%,_transparent_40%),_radial-gradient(circle_at_top_right,_#7f1d1d_0%,_transparent_40%),_radial-gradient(circle_at_bottom,_#451a03_0%,_transparent_50%)] opacity-30"></div>
 
       {/* Snowfall Effect */}
       <Snowfall />
@@ -107,7 +100,7 @@ const App: React.FC = () => {
              <i className="fas fa-star text-[8px] animate-pulse"></i>
           </div>
           
-          <h1 className="text-6xl md:text-9xl brand-font font-light italic text-white mb-4 drop-shadow-2xl">
+          <h1 className="text-6xl md:text-9xl brand-font font-light italic text-white mb-4 drop-shadow-lg">
             NADVENT
           </h1>
           

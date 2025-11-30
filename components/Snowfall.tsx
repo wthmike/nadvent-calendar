@@ -13,8 +13,8 @@ const Snowfall: React.FC = () => {
   const [flakes, setFlakes] = useState<Flake[]>([]);
 
   useEffect(() => {
-    // Generate flakes on client side for consistency
-    const count = 75; // Increased count
+    // Optimized: Reduced flake count from 75 to 40 to improve mobile frame rates
+    const count = 40; 
     const newFlakes = Array.from({ length: count }).map((_, i) => ({
       id: i,
       left: Math.random() * 100, // Random horizontal position
@@ -59,6 +59,7 @@ const Snowfall: React.FC = () => {
             opacity: flake.opacity,
             animation: `snowfall ${flake.animationDuration}s linear infinite`,
             animationDelay: `${flake.animationDelay}s`,
+            willChange: 'transform' // Explicit hint for compositor
           }}
         />
       ))}
